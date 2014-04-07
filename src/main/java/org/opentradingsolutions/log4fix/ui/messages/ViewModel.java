@@ -159,7 +159,6 @@ public class ViewModel implements ListSelectionListener {
                 list.clear();
             }
 
-
             treeTableModel.setRoot(rootNode);
         } else {
             treeTableModel.setRoot(null);

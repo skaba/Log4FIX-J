@@ -34,10 +34,13 @@
 
 package org.opentradingsolutions.log4fix.ui.fields;
 
+import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
+import org.jdesktop.swingx.treetable.TreeTableNode;
 import org.opentradingsolutions.log4fix.core.LogField;
 import org.opentradingsolutions.log4fix.core.LogGroup;
 
 import javax.swing.tree.TreeNode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -46,9 +49,9 @@ import java.util.List;
 /**
  * @author Brian M. Coyner
  */
-public class FieldTreeNode implements TreeNode {
+public class FieldTreeNode extends DefaultMutableTreeTableNode {
 
-    private TreeNode parent;
+    private TreeTableNode parent;
     private final LogField field;
     private List<FieldTreeNode> groups = new ArrayList<FieldTreeNode>();
 
@@ -67,11 +70,11 @@ public class FieldTreeNode implements TreeNode {
         }
     }
 
-    public void setParent(TreeNode parent) {
+    public void setParent(TreeTableNode parent) {
         this.parent = parent;
     }
 
-    public TreeNode getChildAt(int childIndex) {
+    public TreeTableNode getChildAt(int childIndex) {
         return groups.get(childIndex);
     }
 
@@ -79,7 +82,7 @@ public class FieldTreeNode implements TreeNode {
         return field.isRepeatingGroup() ? groups.size() : 0;
     }
 
-    public TreeNode getParent() {
+    public TreeTableNode getParent() {
         return parent;
     }
 

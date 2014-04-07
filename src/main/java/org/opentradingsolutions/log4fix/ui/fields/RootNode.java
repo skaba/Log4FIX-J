@@ -35,6 +35,10 @@
 package org.opentradingsolutions.log4fix.ui.fields;
 
 import javax.swing.tree.TreeNode;
+
+import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
+import org.jdesktop.swingx.treetable.TreeTableNode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -46,12 +50,12 @@ import java.util.List;
  *
  * @author Brian M. Coyner
  */
-public class RootNode implements TreeNode {
+public class RootNode extends DefaultMutableTreeTableNode {
 
-    private List<TreeNode> fields;
+    private List<TreeTableNode> fields;
 
     public RootNode() {
-        fields = new ArrayList<TreeNode>();
+        fields = new ArrayList<TreeTableNode>();
     }
 
     public void addFieldTreeNode(FieldTreeNode node) {
@@ -59,7 +63,7 @@ public class RootNode implements TreeNode {
         node.setParent(this);
     }
 
-    public TreeNode getChildAt(int childIndex) {
+    public TreeTableNode getChildAt(int childIndex) {
         return fields.get(childIndex);
     }
 
@@ -67,7 +71,7 @@ public class RootNode implements TreeNode {
         return fields.size();
     }
 
-    public TreeNode getParent() {
+    public TreeTableNode getParent() {
         return null;
     }
 

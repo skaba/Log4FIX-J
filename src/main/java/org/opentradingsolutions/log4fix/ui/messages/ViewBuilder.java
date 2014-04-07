@@ -40,17 +40,20 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.CompositeMatcherEditor;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
+
 import org.jdesktop.swingx.JXTreeTable;
-import org.jdesktop.swingx.decorator.HighlighterPipeline;
+import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.treetable.TreeTableModel;
 import org.opentradingsolutions.log4fix.core.GlazedListsMemoryLogModel;
 import org.opentradingsolutions.log4fix.core.LogMessage;
 import org.opentradingsolutions.log4fix.core.MemoryLogModel;
 import org.opentradingsolutions.log4fix.ui.fields.FieldHighlighter;
+
 import quickfix.SessionID;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -204,7 +207,7 @@ public class ViewBuilder {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 
-        HighlighterPipeline pipeline = new HighlighterPipeline();
+        CompoundHighlighter pipeline = new CompoundHighlighter();
         pipeline.addHighlighter(new FieldHighlighter());
         table.setHighlighters(pipeline);
 

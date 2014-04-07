@@ -35,6 +35,7 @@
 package org.opentradingsolutions.log4fix.ui.fields;
 
 import org.jdesktop.swingx.JXTreeTable;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.opentradingsolutions.log4fix.core.LogField;
@@ -48,24 +49,26 @@ import java.awt.*;
  * @author Brian M. Coyner
  * @todo - make the colors configurable.
  */
-public class FieldHighlighter extends Highlighter {
+public class FieldHighlighter extends ColorHighlighter {
 
     private Color dataFieldColor = new Color(198, 158, 236);
     private Color headerFieldColor = new Color(252, 152, 108);
     private Color trailerFieldColor = new Color(88, 211, 113);
-
-    protected Color computeBackground(Component renderer, ComponentAdapter adapter) {
+    
+    
+    @Override
+    protected void applyBackground(Component renderer, ComponentAdapter adapter) {
         JXTreeTable table = (JXTreeTable) adapter.getComponent();
         FieldTreeNode node = (FieldTreeNode) table.getPathForRow(adapter.row).getLastPathComponent();
 
         LogField field = node.getField();
-
         if (field.isHeaderField()) {
-            return headerFieldColor;
+            renderer.setBackground(headerFieldColor);
         } else if (field.isTrailerField()) {
-            return trailerFieldColor;
+            renderer.setBackground(trailerFieldColor);
         } else {
-            return dataFieldColor;
+            renderer.setBackground(dataFieldColor);
         }
     }
+    
 }
