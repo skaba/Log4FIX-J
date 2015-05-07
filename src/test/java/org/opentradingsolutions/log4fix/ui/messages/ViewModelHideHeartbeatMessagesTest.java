@@ -29,19 +29,28 @@
 
 package org.opentradingsolutions.log4fix.ui.messages;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.opentradingsolutions.log4fix.core.AbstractSessionTestCase;
 import org.opentradingsolutions.log4fix.core.LogMessage;
 import org.opentradingsolutions.log4fix.core.MockMemoryLogModel;
+import org.opentradingsolutions.log4fix.util.EDTRunner;
 import org.opentradingsolutions.log4fix.util.FIXMessageTestHelper;
+
+import quickfix.DataDictionary;
+import quickfix.SessionID;
 
 /**
  * @author Brian M. Coyner
  */
+@RunWith(EDTRunner.class)
 public class ViewModelHideHeartbeatMessagesTest extends AbstractSessionTestCase {
 
     private JCheckBox checkBox;
@@ -50,22 +59,27 @@ public class ViewModelHideHeartbeatMessagesTest extends AbstractSessionTestCase 
     private FIXMessageTestHelper testHelper;
 
     @Override
-    public void doSetUp() {
+    @Before
+    public void doSetUp() throws Exception {
+    	sessionId = new SessionID("FIX.4.2", "sender", "target");
+        InputStream ddis = getClass().getResourceAsStream("/FIX42.xml");
+        assertNotNull("Cannot find FIX42.xml file on the classpath.", ddis);
+        dictionary = new DataDictionary(ddis);
         checkBox = new JCheckBox();
         memoryLogModel = new MockMemoryLogModel();
         model = new ViewModel(memoryLogModel);
         checkBox.addActionListener(model.getHideHeartbeatsActionListener());
-
         testHelper = new FIXMessageTestHelper(getSessionId());
     }
 
+    @Test
     public void testHideHeartbeatsWhenThereAreNoMessagesIsANoOp() {
-
         memoryLogModel.clear();
         checkBox.setSelected(true);
         assertEquals(0, memoryLogModel.getMessages().size());
     }
 
+    @Test
     public void testHideHeartbeatsWhenThereAreNoHeartbeatMessages() {
 
         List<LogMessage> messages = new ArrayList<LogMessage>();
@@ -86,6 +100,7 @@ public class ViewModelHideHeartbeatMessagesTest extends AbstractSessionTestCase 
         assertEquals(messages, model.getSortedList());
     }
 
+    @Test
     public void testHideOneHeartbeatMessage() {
 
         List<LogMessage> noHeartbeats = new ArrayList<LogMessage>();
@@ -120,4 +135,5 @@ public class ViewModelHideHeartbeatMessagesTest extends AbstractSessionTestCase 
         assertEquals(noHeartbeats, model.getSortedList());
         assertEquals(noHeartbeats, model.getFilteredList());
     }
+
 }

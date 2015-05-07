@@ -29,19 +29,19 @@
 
 package org.opentradingsolutions.log4fix.core;
 
+import java.io.InputStream;
+
 import junit.framework.TestCase;
 import quickfix.DataDictionary;
 import quickfix.SessionID;
-
-import java.io.InputStream;
 
 /**
  * @author Brian M. Coyner
  */
 public abstract class AbstractSessionTestCase extends TestCase {
 
-    private SessionID sessionId;
-    private DataDictionary dictionary;
+    protected SessionID sessionId;
+    protected DataDictionary dictionary;
 
     public AbstractSessionTestCase() {
     }
