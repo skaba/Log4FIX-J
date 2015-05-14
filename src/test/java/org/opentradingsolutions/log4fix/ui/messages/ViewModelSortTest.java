@@ -29,22 +29,29 @@
 
 package org.opentradingsolutions.log4fix.ui.messages;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JCheckBox;
-import javax.swing.SwingUtilities;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.opentradingsolutions.log4fix.core.AbstractSessionTestCase;
 import org.opentradingsolutions.log4fix.core.LogMessage;
 import org.opentradingsolutions.log4fix.core.MockMemoryLogModel;
+import org.opentradingsolutions.log4fix.util.EDTRunner;
 import org.opentradingsolutions.log4fix.util.FIXMessageTestHelper;
+
+import quickfix.DataDictionary;
+import quickfix.SessionID;
 
 /**
  * @author Brian M. Coyner
  */
+@RunWith(EDTRunner.class)
 public class ViewModelSortTest extends AbstractSessionTestCase {
 
     private JCheckBox checkBox;
@@ -52,16 +59,23 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
     private MockMemoryLogModel memoryLogModel;
     private FIXMessageTestHelper testHelper;
 
-    @Override
-    public void doSetUp() {
-        checkBox = new JCheckBox();
-        memoryLogModel = new MockMemoryLogModel();
-        model = new ViewModel(memoryLogModel);
-        checkBox.addActionListener(model.getSortByMessageIndexActionListener());
+	@Override
+	@Before
+	public void doSetUp() throws Exception {
+		sessionId = new SessionID("FIX.4.2", "sender", "target");
+		InputStream ddis = getClass().getResourceAsStream("/FIX42.xml");
+		assertNotNull("Cannot find FIX42.xml file on the classpath.", ddis);
+		dictionary = new DataDictionary(ddis);
 
-        testHelper = new FIXMessageTestHelper(getSessionId());
-    }
+		checkBox = new JCheckBox();
+		memoryLogModel = new MockMemoryLogModel();
+		model = new ViewModel(memoryLogModel);
+		checkBox.addActionListener(model.getSortByMessageIndexActionListener());
 
+		testHelper = new FIXMessageTestHelper(getSessionId());
+	}
+
+    @Test
     public void testSortWhenThereAreNoMessagesIsANoOp() {
 
         memoryLogModel.clear();
@@ -69,6 +83,7 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
         assertEquals(0, memoryLogModel.getMessages().size());
     }
 
+    @Test
     public void testNoSortMaintainsOriginalOrder() {
 
         List<LogMessage> messages = new ArrayList<LogMessage>();
@@ -87,6 +102,7 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
         assertEquals(messages, model.getSortedList());
     }
 
+    @Test
     public void testReverseTheMessageOrder() {
 
         List<LogMessage> messages = new ArrayList<LogMessage>();
@@ -114,6 +130,7 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
         assertEquals(messages, model.getSortedList());
     }
 
+    @Test
     public void testFlipBeforeAdding() {
 
         List<LogMessage> messages = new ArrayList<LogMessage>();
@@ -141,6 +158,7 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
         assertEquals(messages, model.getSortedList());
     }
 
+    @Test
     public void testFlipFlop() {
 
         List<LogMessage> messages = new ArrayList<LogMessage>();
@@ -187,13 +205,13 @@ public class ViewModelSortTest extends AbstractSessionTestCase {
     }
 
     private void waitForSwing() {
-        try {
+       /* try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
                 }
             });
         } catch (InterruptedException e) {
         } catch (InvocationTargetException e) {
-        }
+        }*/
     }
 }

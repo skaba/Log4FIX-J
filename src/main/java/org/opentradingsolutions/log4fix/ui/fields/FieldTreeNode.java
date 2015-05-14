@@ -29,14 +29,10 @@
 
 package org.opentradingsolutions.log4fix.ui.fields;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.tree.TreeNode;
-
 import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
+import org.jdesktop.swingx.treetable.MutableTreeTableNode;
 import org.jdesktop.swingx.treetable.TreeTableNode;
 import org.opentradingsolutions.log4fix.core.LogField;
 import org.opentradingsolutions.log4fix.core.LogGroup;
@@ -46,9 +42,7 @@ import org.opentradingsolutions.log4fix.core.LogGroup;
  */
 public class FieldTreeNode extends DefaultMutableTreeTableNode {
 
-    private TreeTableNode parent;
     private final LogField field;
-    private List<FieldTreeNode> groups = new ArrayList<FieldTreeNode>();
 
     public FieldTreeNode(LogField field) {
         this.field = field;
@@ -59,30 +53,18 @@ public class FieldTreeNode extends DefaultMutableTreeTableNode {
             for (LogGroup logGroup : logGroups) {
                 List<LogField> fields = logGroup.getFields();
                 for (LogField logField : fields) {
-                    groups.add(new FieldTreeNode(logField));
+                    add(new FieldTreeNode(logField));
                 }
             }
         }
     }
 
-    public void setParent(TreeTableNode parent) {
-        this.parent = parent;
-    }
-
-    public TreeTableNode getChildAt(int childIndex) {
-        return groups.get(childIndex);
-    }
-
-    public int getChildCount() {
-        return field.isRepeatingGroup() ? groups.size() : 0;
+    public void setParent(MutableTreeTableNode parent) {
+        super.setParent(parent);
     }
 
     public TreeTableNode getParent() {
         return parent;
-    }
-
-    public int getIndex(TreeNode node) {
-        return groups.indexOf(node);
     }
 
     public boolean getAllowsChildren() {
@@ -91,10 +73,6 @@ public class FieldTreeNode extends DefaultMutableTreeTableNode {
 
     public boolean isLeaf() {
         return !field.isRepeatingGroup();
-    }
-
-    public Enumeration children() {
-        return Collections.enumeration(groups);
     }
 
     public LogField getField() {

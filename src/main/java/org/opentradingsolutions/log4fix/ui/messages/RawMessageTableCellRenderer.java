@@ -29,8 +29,6 @@
 
 package org.opentradingsolutions.log4fix.ui.messages;
 
-import ca.odell.glazedlists.swing.EventTableModel;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
@@ -42,16 +40,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.opentradingsolutions.log4fix.core.LogMessage;
 import org.opentradingsolutions.log4fix.core.ValidationError;
 
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+
 /**
  * @author Brian M. Coyner
  */
 public class RawMessageTableCellRenderer extends DefaultTableCellRenderer {
 
-    public static final String RECEIVING = "Receiving";
+	public static final String RECEIVING = "Receiving";
     public static final String SENDING = "Sending";
 
-    private Color incomingColor = new Color(131, 218, 102);
-    private Color outgoingColor = new Color(233, 173, 89);
+    private Color incomingColor = new Color(255, 200, 80);
+    private Color outgoingColor = new Color(195, 255, 195);
     private SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
     @Override
@@ -61,7 +61,7 @@ public class RawMessageTableCellRenderer extends DefaultTableCellRenderer {
         Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         // noinspection unchecked
-        EventTableModel<LogMessage> tableModel = (EventTableModel<LogMessage>) table.getModel();
+        DefaultEventTableModel<LogMessage> tableModel = (DefaultEventTableModel<LogMessage>) table.getModel();
         LogMessage message = tableModel.getElementAt(row);
 
         if (table.convertColumnIndexToModel(column) == 2) {

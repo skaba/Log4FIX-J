@@ -75,23 +75,38 @@ public class FieldTreeTableModel extends DefaultTreeTableModel {
     }
 
     public Object getValueAt(Object node, int column) {
-
-        FieldTreeNode fieldTreeNode = (FieldTreeNode) node;
-        LogField field = fieldTreeNode.getField();
-
-        switch (column) {
-            case 0:
-                return field.getFieldName();
-            case 1:
-                return field.getTag();
-            case 2:
-                return field.getValue();
-            case 3:
-                return field.getFieldValueName();
-            case 4:
-                return field.isRequired();
-            default:
-                return "Dang It!";
+    	if (node instanceof FieldTreeNode) {
+    		FieldTreeNode fieldTreeNode = (FieldTreeNode) node;
+            LogField field = fieldTreeNode.getField();
+            switch (column) {
+                case 0:
+                    return field.getFieldName();
+                case 1:
+                    return field.getTag();
+                case 2:
+                    return field.getValue();
+                case 3:
+                    return field.getFieldValueName();
+                case 4:
+                    return field.isRequired();
+                default:
+                    return "Dang It!";
+            }
+    	} else {
+    		switch (column) {
+	            case 0:
+	                return "Unknown";
+	            case 1:
+	                return -1;
+	            case 2:
+	                return "None";
+	            case 3:
+	                return "";
+	            case 4:
+	                return false;
+	            default:
+	                return "Dang It!";
         }
+    	}
     }
 }

@@ -29,20 +29,6 @@
 
 package org.opentradingsolutions.log4fix.ui.messages;
 
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.SortedList;
-import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.glazedlists.impl.beans.BeanTableFormat;
-import ca.odell.glazedlists.impl.filter.TextMatcher;
-import ca.odell.glazedlists.impl.matchers.NotMatcher;
-import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.matchers.TextMatcherEditor;
-import ca.odell.glazedlists.swing.EventListModel;
-import ca.odell.glazedlists.swing.EventSelectionModel;
-import ca.odell.glazedlists.swing.EventTableModel;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -64,6 +50,21 @@ import org.opentradingsolutions.log4fix.ui.fields.FieldTreeNode;
 import org.opentradingsolutions.log4fix.ui.fields.FieldTreeTableModel;
 import org.opentradingsolutions.log4fix.ui.fields.RootNode;
 
+import ca.odell.glazedlists.EventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.GlazedLists;
+import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.impl.beans.BeanTableFormat;
+import ca.odell.glazedlists.impl.filter.SearchTerm;
+import ca.odell.glazedlists.impl.filter.TextMatcher;
+import ca.odell.glazedlists.impl.matchers.NotMatcher;
+import ca.odell.glazedlists.matchers.Matcher;
+import ca.odell.glazedlists.matchers.TextMatcherEditor;
+import ca.odell.glazedlists.swing.DefaultEventListModel;
+import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
+import ca.odell.glazedlists.swing.DefaultEventTableModel;
+
 /**
  * Simple core representing raw and cracked FIX messages. This core provides
  * various Swing core objects that are used to bind the data to Swing table components.
@@ -72,15 +73,15 @@ import org.opentradingsolutions.log4fix.ui.fields.RootNode;
  */
 public class ViewModel implements ListSelectionListener {
 
-    private EventTableModel<LogMessage> rawMessagesTableModel;
-    private EventSelectionModel<LogMessage> rawMessagesSelectionModel;
+    private DefaultEventTableModel<LogMessage> rawMessagesTableModel;
+    private DefaultEventSelectionModel<LogMessage> rawMessagesSelectionModel;
     private TableCellRenderer rawMessagesTableCellRenderer;
 
     private final FieldTreeTableModel treeTableModel;
     private final MemoryLogModel memoryLogModel;
     private final SortedList<LogMessage> sortedList;
     private final FilterList<LogMessage> filteredList;
-    private final EventListModel<LogEvent> eventsListModel;
+    private final DefaultEventListModel<LogEvent> eventsListModel;
 
     public ViewModel(MemoryLogModel memoryLogModel) {
         this.memoryLogModel = memoryLogModel;
@@ -91,10 +92,10 @@ public class ViewModel implements ListSelectionListener {
         createRaw(sortedList);
 
         treeTableModel = new FieldTreeTableModel();
-        eventsListModel = new EventListModel<LogEvent>((EventList<LogEvent>) memoryLogModel.getEvents());
+        eventsListModel = new DefaultEventListModel<LogEvent>((EventList<LogEvent>) memoryLogModel.getEvents());
     }
 
-    public EventListModel<LogEvent> getEventsListModel() {
+    public DefaultEventListModel<LogEvent> getEventsListModel() {
         return eventsListModel;
     }
 
@@ -106,7 +107,7 @@ public class ViewModel implements ListSelectionListener {
         return filteredList;
     }
 
-    public EventSelectionModel<LogMessage> getRawMessagesSelectionModel() {
+    public DefaultEventSelectionModel<LogMessage> getRawMessagesSelectionModel() {
         return rawMessagesSelectionModel;
     }
 
@@ -178,9 +179,9 @@ public class ViewModel implements ListSelectionListener {
         TableFormat<LogMessage> adminTableFormat = new BeanTableFormat<LogMessage>(
                 LogMessage.class, properties, columnNames);
 
-        rawMessagesTableModel = new EventTableModel<LogMessage>(adminMessages,
+        rawMessagesTableModel = new DefaultEventTableModel<LogMessage>(adminMessages,
                 adminTableFormat);
-        rawMessagesSelectionModel = new EventSelectionModel<LogMessage>(adminMessages);
+        rawMessagesSelectionModel = new DefaultEventSelectionModel<LogMessage>(adminMessages);
         rawMessagesSelectionModel.addListSelectionListener(this);
         rawMessagesTableCellRenderer = new RawMessageTableCellRenderer();
     }
@@ -204,10 +205,12 @@ public class ViewModel implements ListSelectionListener {
             public void actionPerformed(ActionEvent e) {
                 JCheckBox checkBox = (JCheckBox) e.getSource();
                 if (checkBox.isSelected()) {
-
-                    String[] filters = {"Heartbeat"};
-                    TextMatcher<LogMessage> textMatcher = new TextMatcher<LogMessage>(
-                            filters, new HeartbeatFilterator(), TextMatcherEditor.CONTAINS);
+					SearchTerm<LogMessage>[] filters = new SearchTerm[] { new SearchTerm<LogMessage>(
+							"HeartBeat") };
+					TextMatcher<LogMessage> textMatcher = new TextMatcher<LogMessage>(
+							filters, new HeartbeatFilterator(),
+							TextMatcherEditor.CONTAINS,
+							TextMatcherEditor.NORMALIZED_STRATEGY);
                     Matcher<LogMessage> matcher = new NotMatcher<LogMessage>(textMatcher);
                     filteredList.setMatcher(matcher);
                 } else {
